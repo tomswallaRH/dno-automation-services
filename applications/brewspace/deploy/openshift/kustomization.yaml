@@ -1,0 +1,23 @@
+# Apply to a namespace where you may create Deployments and Routes, for example:
+#   oc apply -k applications/brewspace/deploy/openshift -n <your-dev-namespace>
+#
+# Set real image references after Konflux builds (Components → image digest), e.g.:
+#   cd applications/brewspace/deploy/openshift && \
+#     kustomize edit set image brewspace-api=quay.io/redhat-user-workloads/sfathii-tenant/brewspace-api@sha256:... && \
+#     kustomize edit set image brewspace-frontend=quay.io/redhat-user-workloads/sfathii-tenant/brewspace-frontend@sha256:...
+#
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - brewspace-api.yaml
+  - brewspace-frontend.yaml
+  - routes.yaml
+
+images:
+  - name: brewspace-api
+    newName: quay.io/redhat-user-workloads/sfathii-tenant/brewspace-api
+    newTag: latest
+  - name: brewspace-frontend
+    newName: quay.io/redhat-user-workloads/sfathii-tenant/brewspace-frontend
+    newTag: latest

@@ -17,10 +17,13 @@
   <script>
     async function checkApiHealth() {
       const statusEl = document.getElementById('status');
-      const apiBase = new URLSearchParams(window.location.search).get('api') || 'http://localhost:8080';
+      const apiBase = new URLSearchParams(window.location.search).get('api');
+      const healthUrl = apiBase
+        ? `${apiBase.replace(/\/$/, '')}/health`
+        : '/health';
 
       try {
-        const response = await fetch(`${apiBase}/health`);
+        const response = await fetch(healthUrl);
         if (!response.ok) {
           throw new Error(`Unexpected status ${response.status}`);
         }
