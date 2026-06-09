@@ -1,0 +1,61 @@
+# Educational Pipeline — shows how a build PipelineRun produces an image digest
+# that Konflux later collects into a Snapshot. Production builds use the
+# docker-build bundle embedded in .tekton/konflux-lab-hello-api-*.yaml.
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: konflux-lab-build-hello-api
+spec:
+  description: |
+    Clone hello-api source, build the container image, and surface digest results
+    for Snapshot assembly and integration testing.
+  params:
+    - name: git-url
+      type: string
+    - name: revision
+      type: string
+    - name: output-image
+      type: string
+  results:
+    - name: IMAGE_URL
+      value: $(tasks.build-hello-api.results.IMAGE_URL)
+    - name: IMAGE_DIGEST
+      value: $(tasks.build-hello-api.results.IMAGE_DIGEST)
+  tasks:
+    - name: clone-repository
+      taskRef:
+        resolver: bundles
+        params:
+          - name: bundle
+            value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta:0.1
+          - name: name
+            value: git-clone-oci-ta
+          - name: kind
+            value: task
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.revision)
+        - name: ociStorage
+          value: $(params.output-image).source
+
+    - name: build-hello-api
+      runAfter:
+        - clone-repository
+      taskRef:
+        resolver: bundles
+        params:
+          - name: bundle
+            value: quay.io/konflux-ci/tekton-catalog/task-buildah-oci-ta:0.9
+          - name: name
+            value: buildah-oci-ta
+          - name: kind
+            value: task
+      params:
+        - name: IMAGE
+          value: $(params.output-image)
+        - name: DOCKERFILE
+          value: applications/konflux-lab/components/hello-api/Containerfile
+        - name: CONTEXT
+          value: applications/konflux-lab/components/hello-api

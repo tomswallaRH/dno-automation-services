@@ -1,0 +1,15 @@
+apiVersion: appstudio.redhat.com/v1alpha1
+kind: Component
+metadata:
+  name: hello-api
+  annotations:
+    build.appstudio.openshift.io/pipeline: docker-build
+spec:
+  application: konflux-lab
+  componentName: hello-api
+  source:
+    git:
+      url: https://github.com/example-org/dno-automation-services
+      revision: main
+      context: applications/konflux-lab/components/hello-api
+  containerImage: quay.io/example-org/hello-api

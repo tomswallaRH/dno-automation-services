@@ -1,0 +1,18 @@
+# Apply to a namespace where you may create Deployments and Routes:
+#   oc apply -k applications/konflux-lab/deploy/openshift -n <your-dev-namespace>
+#
+# After Konflux builds hello-api, set the real image digest:
+#   cd applications/konflux-lab/deploy/openshift
+#   kustomize edit set image hello-api=quay.io/redhat-user-workloads/<tenant>/hello-api@sha256:<digest>
+#   oc apply -k . -n <your-dev-namespace>
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - hello-api.yaml
+  - route.yaml
+
+images:
+  - name: hello-api
+    newName: quay.io/redhat-user-workloads/<tenant>/hello-api
+    newTag: latest

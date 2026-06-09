@@ -1,0 +1,26 @@
+apiVersion: appstudio.redhat.com/v1beta1
+kind: IntegrationTestScenario
+metadata:
+  name: konflux-lab-verify-hello-api
+  labels:
+    appstudio.openshift.io/application: konflux-lab
+spec:
+  application: konflux-lab
+  contexts:
+    - name: application
+      description: Validate hello-api / and /health from Snapshot image digest.
+  resolverRef:
+    resolver: git
+    resourceKind: pipeline
+    params:
+      - name: url
+        value: https://github.com/example-org/dno-automation-services
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: applications/konflux-lab/integration/pipeline/verify-health.yaml
+  params:
+    - name: expected-status
+      value: ok
+    - name: expected-application
+      value: konflux-lab

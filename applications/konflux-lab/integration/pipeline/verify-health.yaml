@@ -1,0 +1,75 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: konflux-lab-verify-hello-api
+spec:
+  description: |
+    Validate the konflux-lab Snapshot contains a digest-pinned hello-api image.
+    Integration Service runs this pipeline after Snapshot creation.
+  params:
+    - name: SNAPSHOT
+      type: string
+      description: Snapshot JSON from Integration Service
+    - name: expected-status
+      type: string
+      default: ok
+    - name: expected-application
+      type: string
+      default: konflux-lab
+  tasks:
+    - name: verify-snapshot
+      params:
+        - name: SNAPSHOT
+          value: $(params.SNAPSHOT)
+        - name: expected-status
+          value: $(params.expected-status)
+        - name: expected-application
+          value: $(params.expected-application)
+      taskSpec:
+        params:
+          - name: SNAPSHOT
+            type: string
+          - name: expected-status
+            type: string
+          - name: expected-application
+            type: string
+        steps:
+          - name: validate
+            image: registry.access.redhat.com/ubi9/python-312
+            script: |
+              #!/usr/bin/env python3
+              import json
+              import os
+              import sys
+
+              snapshot = json.loads(os.environ["SNAPSHOT"])
+              expected_application = os.environ["EXPECTED_APPLICATION"]
+
+              application = snapshot.get("application")
+              if application != expected_application:
+                  print(f"application mismatch: {application}")
+                  sys.exit(1)
+
+              components = snapshot.get("components", [])
+              hello_api = next((c for c in components if c.get("name") == "hello-api"), None)
+              if hello_api is None:
+                  print("hello-api missing from Snapshot")
+                  sys.exit(1)
+
+              image = hello_api.get("containerImage", "")
+              if "@sha256:" not in image:
+                  print(f"hello-api image is not digest-pinned: {image}")
+                  sys.exit(1)
+
+              context = hello_api.get("source", {}).get("git", {}).get("context", "")
+              if "hello-api" not in context:
+                  print(f"unexpected source context: {context}")
+                  sys.exit(1)
+
+              print(f"Snapshot valid for {expected_application}")
+              print(f"hello-api image: {image}")
+            env:
+              - name: SNAPSHOT
+                value: $(params.SNAPSHOT)
+              - name: EXPECTED_APPLICATION
+                value: $(params.expected-application)
