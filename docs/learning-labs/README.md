@@ -38,6 +38,7 @@ flowchart LR
 | [05 - Understand Snapshots](lab-05-understand-snapshots.md) | Snapshot CR | “Last green archive” |
 | [06 - Integration Tests](lab-06-integration-tests.md) | IntegrationTestScenario | “Downstream test job” |
 | [07 - Release and Promotion](lab-07-release-and-promotion.md) | Release / GitOps | “Deploy stage” |
+| [08 - Deep Dive Build Execution](lab-08-deep-dive-build-execution.md) | Git push → TaskRun → Pod → Quay → Snapshot (CLI debugging) | “Console log only” |
 
 ## Time estimate
 
@@ -50,8 +51,9 @@ flowchart LR
 | 05 | 45 min |
 | 06 | 60 min |
 | 07 | 45–60 min (concept-heavy) |
+| 08 | 90–120 min (live build trace) |
 
-**Total:** ~6–8 hours spread over several days (build and integration waits add wall-clock time).
+**Total:** ~8–10 hours spread over several days (build and integration waits add wall-clock time).
 
 ## Completion checklist
 

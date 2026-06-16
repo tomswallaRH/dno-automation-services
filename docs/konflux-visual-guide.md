@@ -4,7 +4,7 @@ This guide ties together architecture diagrams for the **brewspace** application
 
 Use this document as a reading order for onboarding; deeper prose lives in `applications/brewspace/konflux-learning-guide.md` and `applications/brewspace/architecture.md`.
 
-**Hands-on labs:** [docs/learning-labs/](learning-labs/README.md) — seven labs for Jenkins engineers (Application → Release).
+**Hands-on labs:** [docs/learning-labs/](learning-labs/README.md) — eight labs for Jenkins engineers (Application → deep-dive build execution).
 
 ---
 
@@ -98,6 +98,10 @@ How traffic flows: browser → Route → frontend Service/Pod → NGINX proxy �
 | (not in Konflux UI) | `deploy/openshift/*.yaml` | `Deployment`, `Service`, `Route` |
 
 ---
+
+## Troubleshooting
+
+- [PipelineRun Pending playbook](troubleshooting/pipelinerun-pending.md) — stuck `brewspace-*-on-push` builds
 
 ## Related documentation in the repo
 
