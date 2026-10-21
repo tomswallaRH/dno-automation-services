@@ -1,0 +1,17 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: echo-api
+  labels:
+    app.kubernetes.io/name: echo-api
+    app.kubernetes.io/part-of: echo-lab
+spec:
+  to:
+    kind: Service
+    name: echo-api
+    weight: 100
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect

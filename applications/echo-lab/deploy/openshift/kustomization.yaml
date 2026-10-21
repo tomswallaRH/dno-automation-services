@@ -1,0 +1,18 @@
+# Apply to a namespace where you may create Deployments and Routes:
+#   oc apply -k applications/echo-lab/deploy/openshift -n <your-dev-namespace>
+#
+# After Konflux builds echo-api, set the real image digest:
+#   cd applications/echo-lab/deploy/openshift
+#   kustomize edit set image echo-api=quay.io/redhat-user-workloads/<tenant>/echo-api@sha256:<digest>
+#   oc apply -k . -n <your-dev-namespace>
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - echo-api.yaml
+  - route.yaml
+
+images:
+  - name: echo-api
+    newName: quay.io/redhat-user-workloads/<tenant>/echo-api
+    newTag: latest

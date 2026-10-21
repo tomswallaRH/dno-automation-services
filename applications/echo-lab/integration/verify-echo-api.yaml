@@ -1,0 +1,26 @@
+apiVersion: appstudio.redhat.com/v1beta1
+kind: IntegrationTestScenario
+metadata:
+  name: echo-lab-verify-echo-api
+  labels:
+    appstudio.openshift.io/application: echo-lab
+spec:
+  application: echo-lab
+  contexts:
+    - name: application
+      description: Validate echo-api / and /health from Snapshot image digest.
+  resolverRef:
+    resolver: git
+    resourceKind: pipeline
+    params:
+      - name: url
+        value: https://github.com/tomswallaRH/dno-automation-services
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: applications/echo-lab/integration/pipeline/verify-health.yaml
+  params:
+    - name: expected-status
+      value: ok
+    - name: expected-application
+      value: echo-lab
